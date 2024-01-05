@@ -1,5 +1,5 @@
 package myGoUtils
-
+ 
 import ( 
    "errors"
    "fmt"
