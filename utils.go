@@ -40,20 +40,29 @@ func TernaryOpeator[Any Atom, Any2 Atom](condition bool, ret1 Any, ret2 Any2) an
 
 // GetTagValue returns a value of a tag into a struct
 func GetTagValue[Any any](fieldName, tagName string) (string, error) {
-   var data Any
-	dataType := reflect.TypeOf(data)
+    // Obtém o tipo da struct
+    var data Any
+    dataType := reflect.TypeOf(data)
 
-	if dataType.Kind() != reflect.Struct {
-		return "", errors.New("O parâmetro 'data' deve ser uma struct")
-	}
+    // Verifica se o tipo é uma struct
+    if dataType.Kind() != reflect.Struct {
+        return "", fmt.Errorf("'%s' must be a struct", dataType.String())
+    }
 
-	field, found := dataType.FieldByName(fieldName)
-	if !found {
-		return "", fmt.Errorf("Campo '%s' não encontrado na struct", fieldName)
-	}
+    // Obtém o valor do campo
+    field, found := dataType.FieldByName(fieldName)
+    if !found {
+        return "", fmt.Errorf("field `%s` does not exist into `%s` struct", fieldName, dataType.String())
+    }
 
-	return field.Tag.Get(tagName), nil
+    ret, found := field.Tag.Lookup(tagName)
+    if !found {
+        return "", fmt.Errorf("tag `%s` does not exist into `%s` field from `%s` struct", tagName, fieldName, dataType.String())
+    }
+
+    return ret, nil
 }
+
 
 // AbsoluteFlatMap converts arrays with sub-arrays into a linear array line `[[[[][]][[[]]][]][]} => []`
 func AbsoluteFlatMap(list []interface{}) []interface{} {
