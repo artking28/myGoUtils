@@ -1,7 +1,6 @@
 package myGoUtils
  
 import ( 
-   "errors"
    "fmt"
    "path/filepath"
    "os"
@@ -40,16 +39,13 @@ func TernaryOpeator[Any Atom, Any2 Atom](condition bool, ret1 Any, ret2 Any2) an
 
 // GetTagValue returns a value of a tag into a struct
 func GetTagValue[Any any](fieldName, tagName string) (string, error) {
-    // Obtém o tipo da struct
     var data Any
     dataType := reflect.TypeOf(data)
 
-    // Verifica se o tipo é uma struct
     if dataType.Kind() != reflect.Struct {
         return "", fmt.Errorf("'%s' must be a struct", dataType.String())
     }
 
-    // Obtém o valor do campo
     field, found := dataType.FieldByName(fieldName)
     if !found {
         return "", fmt.Errorf("field `%s` does not exist into `%s` struct", fieldName, dataType.String())
