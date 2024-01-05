@@ -30,6 +30,14 @@ type double interface {
 	float32 | float64
 }
 
+// TernaryOperator simulate the ternary operator like languages just like (condition ? true : false)
+func TernaryOpeator[Any Atom, Any2 Atom](condition bool, ret1 Any, ret2 Any2) any {
+	if condition {
+		return ret1
+	}
+   return ret2
+}
+
 // GetTagValue returns a value of a tag into a struct
 func GetTagValue[Any any](fieldName, tagName string) (string, error) {
    var data Any
