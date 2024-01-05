@@ -30,7 +30,7 @@ type double interface {
 	float32 | float64
 }
 
-// TernaryOperator simulate the ternary operator like languages just like (condition ? true : false)
+// TernaryOperator simulate the ternary operator just like (condition ? true : false)
 func TernaryOpeator[Any Atom, Any2 Atom](condition bool, ret1 Any, ret2 Any2) any {
 	if condition {
 		return ret1
@@ -54,7 +54,6 @@ func GetTagValue[Any any](fieldName, tagName string) (string, error) {
 
 	return field.Tag.Get(tagName), nil
 }
-
 
 // AbsoluteFlatMap converts arrays with sub-arrays into a linear array line `[[[[][]][[[]]][]][]} => []`
 func AbsoluteFlatMap(list []interface{}) []interface{} {
@@ -112,7 +111,7 @@ func Ptr[Any any](some Any) *Any {
 	return &some
 }
 
-/* PointerVal returns the value hold by a pointer. If the pointer
+/* PointerVal returns the value held by a pointer. If the pointer
  is nil the zerovalue is returned. */
 func PtrVal[Any any](some *Any) Any {
 	if some == nil {
