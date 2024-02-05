@@ -59,6 +59,33 @@ func GetTagValue[Any any](fieldName, tagName string) (string, error) {
     return ret, nil
 }
 
+// Get the system language
+func GetLocale() string {
+
+	var cmd *exec.Cmd
+
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("powershell", "Get-Culture | select -exp Name")
+
+	case "darwin":
+		cmd = exec.Command("osascript", "-e", "user locale of (get system info)")
+
+	case "linux":
+		output, ok := os.LookupEnv("LANG")
+		if ok {
+			return strings.ReplaceAll(strings.TrimSpace(output), "_", "-")
+		}
+	}
+
+	output, err := cmd.Output()
+	if err != nil || string(output) == "" {
+		return "en-US"
+	}
+
+	return strings.ReplaceAll(strings.TrimSpace(string(output)), "_", "-")
+}
+
 
 // AbsoluteFlatMap converts arrays with sub-arrays into a linear array line `[[[[][]][[[]]][]][]} => []`
 func AbsoluteFlatMap(list []interface{}) []interface{} {
