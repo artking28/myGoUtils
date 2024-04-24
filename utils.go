@@ -1,12 +1,14 @@
 package myGoUtils
- 
-import ( 
-   "fmt"
-   "path/filepath"
-   "os"
-   "reflect"
-   "strconv" 
-   "strings" 
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"reflect"
+	"runtime"
+	"strconv"
+	"strings"
 )
 
 type Atom interface {
@@ -34,29 +36,29 @@ func TernaryOpeator[Any Atom, Any2 Atom](condition bool, ret1 Any, ret2 Any2) an
 	if condition {
 		return ret1
 	}
-   return ret2
+	return ret2
 }
 
 // GetTagValue returns a value of a tag into a struct
 func GetTagValue[Any any](fieldName, tagName string) (string, error) {
-    var data Any
-    dataType := reflect.TypeOf(data)
+	var data Any
+	dataType := reflect.TypeOf(data)
 
-    if dataType.Kind() != reflect.Struct {
-        return "", fmt.Errorf("'%s' must be a struct", dataType.String())
-    }
+	if dataType.Kind() != reflect.Struct {
+		return "", fmt.Errorf("'%s' must be a struct", dataType.String())
+	}
 
-    field, found := dataType.FieldByName(fieldName)
-    if !found {
-        return "", fmt.Errorf("field `%s` does not exist into `%s` struct", fieldName, dataType.String())
-    }
+	field, found := dataType.FieldByName(fieldName)
+	if !found {
+		return "", fmt.Errorf("field `%s` does not exist into `%s` struct", fieldName, dataType.String())
+	}
 
-    ret, found := field.Tag.Lookup(tagName)
-    if !found {
-        return "", fmt.Errorf("tag `%s` does not exist into `%s` field from `%s` struct", tagName, fieldName, dataType.String())
-    }
+	ret, found := field.Tag.Lookup(tagName)
+	if !found {
+		return "", fmt.Errorf("tag `%s` does not exist into `%s` field from `%s` struct", tagName, fieldName, dataType.String())
+	}
 
-    return ret, nil
+	return ret, nil
 }
 
 // Get the system language
@@ -85,7 +87,6 @@ func GetLocale() string {
 
 	return strings.ReplaceAll(strings.TrimSpace(string(output)), "_", "-")
 }
-
 
 // AbsoluteFlatMap converts arrays with sub-arrays into a linear array line `[[[[][]][[[]]][]][]} => []`
 func AbsoluteFlatMap(list []interface{}) []interface{} {
@@ -117,18 +118,18 @@ func GetFilesInto(path string, extentionFilter string) ([]os.FileInfo, error) {
 
 // Int convert any valid numeral string into number
 func Int[intType number](str string) (intType, error) {
-   ret, err := strconv.ParseInt(strings.TrimSpace(str), 10, 64)
-	if err != nil{
-      return 0, err
+	ret, err := strconv.ParseInt(strings.TrimSpace(str), 10, 64)
+	if err != nil {
+		return 0, err
 	}
 	return intType(ret), nil
 }
 
 // Float convert any valid floating point string to a real floating point
 func Float[floatType double](str string) (floatType, error) {
-   ret, err := strconv.ParseFloat(strings.TrimSpace(str), 64)
+	ret, err := strconv.ParseFloat(strings.TrimSpace(str), 64)
 	if err != nil {
-      return 0, nil
+		return 0, nil
 	}
 	return floatType(ret), nil
 }
@@ -143,8 +144,11 @@ func Ptr[Any any](some Any) *Any {
 	return &some
 }
 
-/* PointerVal returns the value held by a pointer. If the pointer
- is nil the zerovalue is returned. */
+/*
+	PointerVal returns the value held by a pointer. If the pointer
+
+is nil the zerovalue is returned.
+*/
 func PtrVal[Any any](some *Any) Any {
 	if some == nil {
 		var ret Any
