@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -59,6 +60,31 @@ func GetTagValue[Any any](fieldName, tagName string) (string, error) {
 	}
 
 	return ret, nil
+}
+
+// Split by regex withot losing the delimiters
+func SplitAfterRegex(rgx *regexp.Regexp, str string) (ret []string) {
+	var l []int
+	i, all := 0, rgx.FindAllStringIndex(str, -1)
+	if all[0][0] != 0 {
+		l = append(l, 0)
+	}
+	for _, one := range all {
+		l = append(l, one...)
+		if add := str[l[i]:l[i+1]]; len(add) > 0 {
+			ret = append(ret, add)
+		}
+		i++
+	}
+	if all[len(all)-1][1] != len(str) {
+		l = append(l, len(str))
+	}
+	for ; i < len(l)-1; i++ {
+		if add := str[l[i]:l[i+1]]; len(add) > 0 {
+			ret = append(ret, add)
+		}
+	}
+	return ret
 }
 
 // Get the system language
