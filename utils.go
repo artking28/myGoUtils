@@ -13,6 +13,7 @@ import (
 )
 
 type Atom interface {
+	comparable
 	number | double | any | struct{} | string
 }
 
