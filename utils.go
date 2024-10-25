@@ -1,6 +1,7 @@
 package myGoUtils
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -203,4 +204,47 @@ func ToPairs[K comparable, V any](m map[K]V) []Pair[K, V] {
 		i++
 	}
 	return pairs
+}
+
+// VecMap applies a function to each element in the slice and returns a new slice with the results
+func VecMap[T, R any](v []T, f func(T) R) []R {
+	count := len(v)
+	if count == 0 {
+		return nil
+	}
+	ret := make([]R, count)
+	for i, value := range v {
+		ret[i] = f(value)
+	}
+	return ret
+}
+
+// VecReduce reduces the slice to a single value using the provided function.
+func VecReduce[T any](v []T, f func(T, T) T) (T, error) {
+	count := len(v)
+	if count == 0 {
+		var ret T
+		return ret, errors.New("empty array")
+	}
+	ret := v[0]
+	for i := 1; i < count; i++ {
+		ret = f(ret, v[i])
+	}
+	return ret, nil
+}
+
+// VecFilter filters the slice based on a condition defined by the function and returns a new slice
+func VecFilter[T any](v []T, f func(T) bool) []T {
+	count := len(v)
+	if count == 0 {
+		return nil
+	}
+	i, ret := 0, make([]T, 0, count)
+	for _, value := range v {
+		if f(value) {
+			ret = append(ret, value)
+			i++
+		}
+	}
+	return ret
 }
