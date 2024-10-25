@@ -2,12 +2,12 @@ package myGoUtils
 
 // Set - Definition of a generic Set structure that stores unique values of type T,
 // where T must satisfy the Atom constraint (likely an interface defined elsewhere).
-type Set[T Atom] struct {
+type Set[T comparable] struct {
 	content map[T]bool
 }
 
 // NewSet - Constructor that creates a new empty Set, initializing the map.
-func NewSet[T Atom]() Set[T] {
+func NewSet[T comparable]() Set[T] {
 	return Set[T]{
 		content: map[T]bool{},
 	}
@@ -60,9 +60,9 @@ func (this *Set[T]) Clear() {
 
 // AsArray method returns the Set's values as a slice.
 func (this *Set[T]) AsArray() []T {
-	ret := []T{}
+	i, ret := 0, make([]T, len(this.content))
 	for k := range this.content {
-		ret = append(ret, k)
+		ret[i] = k
 	}
 	return ret
 }

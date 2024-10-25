@@ -12,9 +12,8 @@ import (
 	"strings"
 )
 
-type Atom interface {
-	comparable
-	number | double | any | struct{} | string
+type Stringer interface {
+	ToString() string
 }
 
 type number interface {
@@ -34,7 +33,7 @@ type double interface {
 }
 
 // TernaryOperator simulates the ternary operator just like (condition ? true : false)
-func TernaryOperator[Any Atom, Any2 Atom](condition bool, ret1 Any, ret2 Any2) any {
+func TernaryOperator(condition bool, ret1, ret2 any) any {
 	if condition {
 		return ret1
 	}
@@ -63,7 +62,7 @@ func GetTagValue[Any any](fieldName, tagName string) (string, error) {
 	return ret, nil
 }
 
-// SplitAfterRegex splits by regex withot losing the delimiters
+// SplitAfterRegex splits by regex without losing the delimiters
 func SplitAfterRegex(rgx *regexp.Regexp, str string) (ret []string) {
 	var l []int
 	i, all := 0, rgx.FindAllStringIndex(str, -1)
@@ -115,7 +114,7 @@ func GetLocale() string {
 	return strings.ReplaceAll(strings.TrimSpace(string(output)), "_", "-")
 }
 
-// AbsoluteFlatMap converts arrays with sub-arrays into a linear array line `[[[[][]][[[]]][]][]} => []`
+// AbsoluteFlatMap converts arrays with recursive sub-arrays into simple array
 func AbsoluteFlatMap(list []interface{}) []interface{} {
 	var ret []interface{}
 	for _, o := range list {
@@ -162,8 +161,12 @@ func Float[floatType double](str string) (floatType, error) {
 }
 
 // String converts anything to `string`
-func String[Any any](some Any) string {
-	return fmt.Sprintf("%v", some)
+func String(v any) string {
+	r := reflect.ValueOf(v)
+	if r.Kind() == reflect.Struct {
+		return "Object " + stringifyObj(r, 0, r.Kind())
+	}
+	return fmt.Sprintf("%v", v)
 }
 
 // Ptr get any obj pointer
@@ -178,4 +181,26 @@ func PtrVal[Any any](some *Any) Any {
 		return ret
 	}
 	return *some
+}
+
+// MapKeys returns all keys of the map as a slice.
+func MapKeys[K comparable, V any](m map[K]V) []K {
+	k, _ := toSlice(m)
+	return k
+}
+
+// MapValues returns all values of the map as a slice.
+func MapValues[K comparable, V any](m map[K]V) []V {
+	_, v := toSlice(m)
+	return v
+}
+
+// ToPairs converts the map into a slice of key-value pairs.
+func ToPairs[K comparable, V any](m map[K]V) []Pair[K, V] {
+	i, pairs := 0, make([]Pair[K, V], len(m))
+	for k, v := range m {
+		pairs[i] = NewPair(k, v)
+		i++
+	}
+	return pairs
 }

@@ -3,13 +3,13 @@ package myGoUtils
 import "fmt"
 
 // Pair represents a pair of values of possibly different types.
-type Pair[T0 any, T1 any] struct {
+type Pair[T0, T1 any] struct {
 	Left  T0
 	Right T1
 }
 
 // NewPair creates a new Pair with the specified values.
-func NewPair[T0 any, T1 any](left T0, right T1) Pair[T0, T1] {
+func NewPair[T0, T1 any](left T0, right T1) Pair[T0, T1] {
 	return Pair[T0, T1]{Left: left, Right: right}
 }
 
