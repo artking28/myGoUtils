@@ -233,18 +233,22 @@ func VecReduce[T any](v []T, f func(T, T) T) (T, error) {
 	return ret, nil
 }
 
-// VecFilter filters the slice based on a condition defined by the function and returns a new slice
-func VecFilter[T any](v []T, f func(T) bool) []T {
+// VecFilter separates elements in a slice based on a provided condition function.
+// The first returned slice contains elements that satisfy the condition (approved),
+// while the second slice contains elements that do not meet the condition (non-approved).
+func VecFilter[T any](v []T, f func(T) bool) ([]T, []T) {
 	count := len(v)
 	if count == 0 {
-		return nil
+		return nil, nil
 	}
-	i, ret := 0, make([]T, 0, count)
+	i, ret, neg := 0, make([]T, 0, count), make([]T, 0, count)
 	for _, value := range v {
 		if f(value) {
 			ret = append(ret, value)
 			i++
+			continue
 		}
+		neg = append(neg, value)
 	}
-	return ret
+	return ret, neg
 }
