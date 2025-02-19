@@ -63,6 +63,7 @@ func (this *Set[T]) AsArray() []T {
 	i, ret := 0, make([]T, len(this.content))
 	for k := range this.content {
 		ret[i] = k
+		i++
 	}
 	return ret
 }
